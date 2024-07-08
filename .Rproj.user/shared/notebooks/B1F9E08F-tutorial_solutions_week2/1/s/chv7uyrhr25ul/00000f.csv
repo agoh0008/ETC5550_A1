@@ -1,0 +1,15 @@
+"0","library(readr)"
+"0","library(dplyr)"
+"0","library(rsample)"
+"0",""
+"0","bushfires <- read_csv(""https://raw.githubusercontent.com/dicook/mulgar_book/pdf/data/bushfires_2019-2020.csv"")"
+"2","[1mRows: [22m[34m1022[39m [1mColumns: [22m[34m60[39m"
+"2","[36m──[39m [1mColumn specification[22m [36m──────────────────────────────────────────────────[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m   (3): FOR_TYPE, FOR_CAT, cause
+[32mdbl[39m  (56): id, lon, lat, FOR_CODE, COVER, HEIGHT, FOREST, rf, arf7, ar...
+[34mdate[39m  (1): time"
+"2","
+[36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
+[36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message."
+"0","bushfires |> count(cause)"

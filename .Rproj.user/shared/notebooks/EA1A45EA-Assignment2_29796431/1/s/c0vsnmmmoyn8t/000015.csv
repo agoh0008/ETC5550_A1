@@ -1,0 +1,8 @@
+"0",""
+"0","autoplot(retail, color = ""maroon"") +"
+"0","  ggtitle(""Original Time Plot - Monthly Retail Turnover"") +"
+"0","  ylab(""Turnover ($m)"") + "
+"0","  labs(subtitle = ""(1982-2022)"") + "
+"0","  theme(plot.title = element_text(size = 12)) +"
+"0","  theme_minimal()"
+"0",""

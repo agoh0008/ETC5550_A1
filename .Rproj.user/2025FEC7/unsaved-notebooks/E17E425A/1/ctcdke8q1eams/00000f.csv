@@ -1,0 +1,6 @@
+"0","ggplot(spam, aes(x=spam, y=size.kb, colour=spam)) +"
+"0","  geom_quasirandom() +"
+"0","  scale_color_brewer("""", palette = ""Dark2"") + "
+"0","  coord_flip() +"
+"0","  theme(legend.position=""none"") +"
+"0","  scale_y_log10()"

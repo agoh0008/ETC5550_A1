@@ -1,0 +1,7 @@
+"0",""
+"0","retail %>% "
+"0","  model(STL(Turnover_Transformed ~ trend(window = 21) + "
+"0","              season(window = ""periodic""))) %>% "
+"0","  components() %>% "
+"0","  autoplot()"
+"0",""

@@ -1,0 +1,254 @@
+---
+title: "Assignment 2"
+author: "Alexandra Goh (29796431)"
+output: html_document
+date: "2024-03-05"
+---
+<br>
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+
+```
+
+```{r, echo = FALSE, message = FALSE}
+
+library(fpp3)
+get_my_data <- function(student_id) {
+  set.seed(student_id)
+  all_data <- fill_gaps(readr::read_rds("https://bit.ly/monashretaildata"))
+  while(TRUE) {
+    retail <- filter(all_data, `Series ID` == sample(`Series ID`, 1)) 
+    if(!any(is.na(retail$Turnover))) return(retail)
+  }
+}
+# Replace the argument with your student ID
+retail <- get_my_data(29796431)
+
+```
+
+
+#### **Plot your time series using the autoplot() command. What do you learn from the plot?**
+
+Based on the plot of monthly turnover for the Clothing, Footwear, and Personal Accessory Retailing Industry in Victoria from 1982 to 2022, several key observations can be made.
+
+Firstly, there is a discernible non-linear upward trend in turnover over the years, which notably increases after the year 2000. This suggests exponential growth in retail turnover and a general rise in consumer spending within the retail industry over the decades, likely driven by factors such as economic growth and increasing disposable incomes. 
+
+The plot also reveals a clear seasonal pattern, with sharp peaks occurring consistently at some specific month of each year (most likely every December, based on observation from the autoplot). This seasonal spike in turnover is likely attributable to increased customer shopping during the holiday and Christmas season, including popular events such as Christmas deals and end-of-year promotions (e.g. Boxing Day). Following immediately after it however, there appears to be a sharp dip in retail sales. This decline may be due to post-holiday consumer fatigue and reduced discretionary spending during January or February as consumers recover from the expenses incurred during the holiday season. 
+
+Additionally, there seems to an uptick in sales during the middle of each year (possibly in May and June). However, this increase is not as large as the spikes observed during December. This pick-up in retail turnover could be influenced by various factors such as seasonal sales promotions, clearance events, and the introduction of new seasonal merchandise lines. Despite being winter months in Victoria, the cooler weather during May and June may still prompt consumer spending on clothing and footwear suitable for colder seasons, contributing to the rise in retail turnover during these months.
+
+One noticeable outlier was the large drop in retail turnover during the months of 2020, corresponding with the onset of the COVID-19 pandemic and subsequent lockdown measures. This substantial decline underscores the adverse impact that the pandemic had on retail businesses during this period. Several factors contributing to this downturn include widespread economic uncertainty (which led many consumers to reduce discretionary spending and prioritize essential items), reduced foot traffic in physical retail stores as well as the temporary closure of non-essential retail establishments during lockdowns.
+
+Last but not least, the plot reveals a multiplicative seasonal pattern where the seasonal fluctuations in retail turnover seem to increase in amplitude over time. This suggests that the variation in turnover is proportional to the level of the series, implying a heightened level of variation in retail turnover levels over time. 
+
+
+<br>
+
+```{r, echo = FALSE, message = FALSE}
+
+autoplot(retail, color = "maroon") +
+  ggtitle("Monthly Retail Turnover in Victoria (Clothing, Footwear, & Personal Accessory)") +
+  ylab("Turnover ($m)") + 
+  labs(subtitle = "(1982-2022)") + 
+  theme(plot.title = element_text(size = 12)) +
+  theme_minimal()
+
+```
+<br>
+
+---
+
+#### **Plot your time series using the gg_season() command. What do you learn from the plot?**
+
+To account for February having fewer days in the year compared to other months, we plotted average daily turnover for our seasonal analysis.
+
+From the seasonal plot below, it is evidently clear that there is a large jump in average daily turnover in December of each year. This pattern suggests increased spending during the holiday season, which are likely driven by Christmas festive promotions and end-of-year sales. 
+
+The plot also shows a significant decline in average daily turnover in April 2020. This stands out from the typical trend observed in other years, where turnover generally increases or remains stable between March and April. This low turnover in April 2020 may be attributed to effects from the COVID-19 pandemic as aforementioned, when widespread lockdowns and business closures were more prevalent in Victoria during that time. 
+
+Furthermore, the years 2020 and 2021 appear to exhibit larger fluctuations in turnover between months compared to other years, hinting at the profound impact of the COVID-19 pandemic on the retail industry in Victoria. For instance, there are noticeable drops in turnover during August and September in both 2020 and 2021, whereas in contrast, more stable turnover patterns are observed in previous years during those months. These fluctuations in 2020 and 2021 reflect the challenges faced by retailers during the pandemic, as they struggle to adapt to shifts in consumer demand and shopping behaviors. 
+
+<br>
+
+```{r, echo = FALSE, message = FALSE}
+
+library(plotly)
+
+retail %>% 
+  gg_season(Turnover / days_in_month(Month), 
+            labels = "both") +
+  ggtitle("Seasonal Retail Turnover in Victoria (Clothing, Footwear, & Personal Accessory)") +
+  ylab("Average Daily Turnover ($m)") +
+  labs(subtitle = "(1982-2022)") + 
+  theme(plot.title = element_text(size = 12)) +
+  theme_minimal()
+
+```
+<br>
+
+---
+
+#### **Plot your time series using the gg_subseries() command. What do you learn from the plot?**
+
+
+Based on the seasonal subseries plot, December exhibits the largest increase in retail turnover over the years compared to other months; it also has the highest mean turnover overall. This emphasizes December's importance as a peak period for retail sales. In contrast, February stands out with the lowest mean turnover among all months, which may be due to lower demand for clothing, footwear and personal accessories during that time of the year.
+
+Meanwhile in 2020, the turnover drops in April, August and September were notably below their respective mean turnover levels, indicating significant impacts of the COVID-19 pandemic on the retail industry during those months. April 2020, in particular, witnessed the most substantial decline in turnover compared to other months in the same year, inferring that it was hit the hardest by the pandemic during that time.
+
+Despite overall year-on-year declines in turnover for most months in 2020, January, November and December saw increases instead. These anomalies may be because in January, the pandemic was not yet fully affecting Victoria whereas November and December likely saw uplifts as lockdown measures eased and consumer spending patterns started to recover.
+
+<br>
+
+```{r, echo = FALSE, message = FALSE}
+
+retail %>% 
+  gg_subseries(Turnover) +
+  ylab("Turnover ($m)") +
+  labs(
+    title = "Seasonal Subseries for Monthly Retail Turnover in Victoria",
+    subtitle = "(1982-2022)") 
+
+```
+<br>
+
+---
+
+#### **Find an appropriate Box-Cox transformation for your data and explain why you have chosen the particular transformation parameter λ.**
+
+Based on the original time plot we constructed using the autoplot() command, there is indeed a noticeable upward trend in retail turnover throughout the years. However, this trend appears to be non-linear, suggesting that the rate of increase in turnover is not constant over time. Additionally, the data exhibits variation that increases or decreases proportionately with the level of the series, indicating a multiplicative seasonal pattern.
+
+Given the non-linear trend and the proportional variation observed in the retail data, it may be appropriate to apply a transformation to better capture the underlying patterns. This transformation could help stabilize the variance and make the trend more linear.
+
+```{r, echo = FALSE, message = FALSE}
+
+autoplot(retail, color = "maroon") +
+  ggtitle("Original Time Plot - Monthly Retail Turnover") +
+  ylab("Turnover ($m)") + 
+  labs(subtitle = "(1982-2022)") + 
+  theme(plot.title = element_text(size = 12)) +
+  theme_minimal()
+
+```
+
+
+Firstly, we apply a logarithmic transformation to explore its impact on the retail turnover data. Upon initial examination, the log transformation seems quite promising, as it appears to stabilize the variation in seasonality over time. However, it's important to note that the trend in the data is still not entirely linearized.
+
+```{r, echo = FALSE, message = FALSE}
+
+retail %>% 
+  autoplot(log(Turnover), color = "darkblue") +
+  ggtitle("Log Transformation of Monthly Retail Turnover") +
+  ylab("Log Turnover") + 
+  xlab("Year") +
+  labs(subtitle = "(1982-2022)") + 
+  theme(plot.title = element_text(size = 12)) +
+  theme_bw() 
+
+```
+
+Next, we explore the effectiveness of a square root transformation on the retail turnover data. However, upon observing the resulting plot below, it becomes apparent that the square root transformation is too weak in stabilizing the variation in seasonality. Notably, the seasonal fluctuations in turnover are not evenly stabilized across the entire time series, as there are still significantly larger variations in seasonality towards the end of the series compared to the start.
+  
+
+```{r, echo = FALSE, message = FALSE}
+
+retail %>% 
+  autoplot(sqrt(Turnover), color = "darkgreen") +
+  ggtitle("Square Root Transformation of Monthly Retail Turnover") +
+  ylab("Square Root Turnover") + 
+  xlab("Year") +
+  labs(subtitle = "(1982-2022)") + 
+  theme(plot.title = element_text(size = 12)) +
+  theme_bw()
+
+```
+
+Using Guerrero's method for Box Cox lambda selection, which automatically determines the optimal λ value for normalizing our retail data, we found that the λ value chosen is approximately -0.284. To test this, we generated an autoplot to assess if the variance in our data has become more stabilized.
+
+Upon applying the Box-Cox transformation with a λ of -0.284, the autoplot reveals that the variation across different levels of the series is now more even. Previously, we observed significantly larger fluctuations in retail turnover towards the end of the series (i.e., months in later years) compared to the beginning (i.e., months in earlier years). However, after the transformation with λ = -0.284, the seasonal variation across the entire series displays greater consistency.
+
+However, upon closer examination, we discovered that when we use λ = -0.284, the fluctuations at the start of the series are slightly larger than the seasonal variation at the end. But when we use λ = 0, which is equivalent to a log transformation, we manage to balance the size of fluctuations around the level to be roughly constant across the series. As a good choice of the λ parameter is one that makes the variation around the trend homoskedastic (i.e., constant variance), the best choice appears to be λ = 0.
+
+Furthermore, the shape of the time series suggests a more uniform size of seasonal variation across the entire series when using λ = 0. This indicates a reduction in the variability of seasonal fluctuations in retail turnover compared to when using λ = -0.284.
+
+It's important to note that neither the Box-Cox nor the log transformation fully linearized the data. Despite this limitation, our primary focus remains on achieving the stabilization of seasonal variability within the dataset.
+
+In summary, selecting λ = 0 for the Box-Cox transformation, which is equivalent to using a log transformation, has effectively achieved a more balanced distribution of variation across the entire series, with consistent seasonal variation observed throughout.
+
+<br>
+
+```{r, echo = FALSE, message = FALSE}
+
+retail %>% 
+  features(Turnover, features = guerrero)
+
+```
+
+```{r, echo = FALSE, message = FALSE}
+
+retail %>% 
+  autoplot(box_cox(Turnover, -0.284)) +
+  labs(y = "Box-Cox Transformed Turnover (λ = -0.284)") +
+  theme_minimal() +
+  labs(
+    title = "Box-Cox Transformation of Monthly Retail Turnover (λ = -0.284)") +
+  labs(subtitle = "(1982-2022)") + 
+  theme(plot.title = element_text(size = 12))
+
+```
+
+```{r, echo = FALSE, message = FALSE}
+
+retail %>% 
+  autoplot(box_cox(Turnover, 0), color = "darkblue") +
+  labs(y = "Box-Cox Transformed Turnover (λ = 0)") +
+  theme_minimal() +
+  labs(
+    title = "Box-Cox Transformation of Monthly Retail Turnover (λ = 0)") +
+  labs(subtitle = "(1982-2022)") + 
+  theme(plot.title = element_text(size = 12))
+
+```
+
+
+<br>
+
+---
+
+#### **Produce a plot of an STL decomposition of the transformed data. What do you learn from the plot?**
+
+The decomposition of retail turnover data using the STL method provides insights into the underlying patterns and the impact of external factors, particularly the COVID-19 pandemic. The STL decomposition used in this case is additive, decomposing the time series into trend, seasonal, and remainder components.
+
+Experimentation was conducted with various window sizes for both trend and seasonal components to optimize the STL decomposition of the retail turnover data. Initially, a trend window of 21 and a seasonal window of 19 were selected to strike a balance between capturing the trend and monthly seasonality effectively. However, using a seasonal window size of 19 resulted in the COVID-19 effect appearing in the seasonal component; at the start of the series, a peak followed by a decline is observed while towards the end, the pattern reverses, with a lower initial peak succeeded by a larger peak. To address this inconsistency and focus solely on capturing the seasonal pattern, the seasonal window was then adjusted to be periodic. 
+
+The trend-cycle component reveals a distinct upward trend throughout the observed period, indicative of the general growth trajectory of the retail industry. However, a slight deviation is evident towards the end, particularly after January 2020, coinciding with the onset of the COVID-19 pandemic. This sudden drop indicates a significant disruption in retail turnover, reflecting the pandemic's profound impact on consumer behavior and economic activity. Notably, no discernible cyclical pattern is observed over the entire time series period.
+
+With the seasonal component now set to be periodic, the analysis exhibits a consistent seasonal pattern throughout the time series. Specifically, the seasonal component reveals a recurring pattern characterized by a small peak at the start followed by a larger and sharper increase. This adjustment ensures that the seasonal analysis accurately captures the inherent seasonal variations (i.e. monthly seasonality) in the data while mitigating the influence of external factors such as the COVID-19 pandemic.
+
+Additionally, the large grey bar in the seasonal panel indicates that the variation in the seasonal component is relatively small compared to the original data and the trend. This suggests that while seasonality exists, its influence on the overall variability of the data is limited. This consistency in seasonality implies predictability and may indicate that seasonal factors have a smaller effect on retail turnover fluctuations compared to other factors.
+
+Examining the remainder component reveals anomalies towards the end of the time series, particularly after January 2020. These anomalies correspond to a sharp and significant drop in turnover, aligning with the period of the COVID-19 pandemic. The smaller-scale bar in the remainder component compared to the seasonal component also supports this observation, indicating that anomalies in the remainder component may have contributed more to overall variability in the data. These anomalies therefore emphasize the disruptive impact of the pandemic on turnover levels in the retail industry.
+
+In summary, the STL decomposition of the transformed retail turnover data reveals an upward trend, consistent seasonality, and anomalies associated with the COVID-19 pandemic. While seasonality plays a role in shaping turnover, its magnitude is overshadowed by other factors, particularly the disruptive effects of external events such as the pandemic. 
+
+<br>
+
+```{r, echo = FALSE, message = FALSE}
+
+retail$Turnover_Transformed <- box_cox(retail$Turnover, lambda = 0)
+
+```
+
+
+```{r, echo = FALSE, message = FALSE}
+
+retail %>% 
+  model(STL(Turnover_Transformed ~ trend(window = 21) + 
+              season(window = "periodic"))) %>% 
+  components() %>% 
+  autoplot()
+
+```
+
+

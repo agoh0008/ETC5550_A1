@@ -1,0 +1,16 @@
+"0","library(ggplot2)"
+"0","library(ggbeeswarm)"
+"0","spam <- read_csv(""http://ggobi.org/book/data/spam.csv"")"
+"2","[1mRows: [22m[34m2171[39m [1mColumns: [22m[34m21[39m"
+"2","[36m──[39m [1mColumn specification[22m [36m──────────────────────────────────────────────────[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (13): day of week, box, domain, local, name, credit, sucker, porn,...
+[32mdbl[39m  (8): isuid, id, time of day, size.kb, digits, cappct, special, sp..."
+"2","
+[36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
+[36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message."
+"0","ggplot(spam, aes(x=spam, y=size.kb, colour=spam)) +"
+"0","  geom_quasirandom() +"
+"0","  scale_color_brewer("""", palette = ""Dark2"") + "
+"0","  coord_flip() +"
+"0","  theme(legend.position=""none"")"

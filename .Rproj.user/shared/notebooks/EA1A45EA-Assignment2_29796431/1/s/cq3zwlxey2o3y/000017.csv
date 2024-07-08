@@ -1,0 +1,8 @@
+"0",""
+"0","retail %>% "
+"0","  gg_subseries(Turnover) +"
+"0","  ylab(""Turnover ($m)"") +"
+"0","  labs("
+"0","    title = ""Seasonal Subseries for Monthly Retail Turnover in Victoria"","
+"0","    subtitle = ""(1982-2022)"") "
+"0",""
